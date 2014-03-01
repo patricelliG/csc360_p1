@@ -15,10 +15,11 @@ public final class WebServer
         // Process incomming connection requests
         while (true) 
         {
+            // Accept the incomming request
             Socket clientSocket = serverSocket.accept();
              
             // Construct an object to process the HTTP request message.
-            HttpRequest = request = new HttpRequest(clientSocket);
+            HttpRequest request = new HttpRequest(clientSocket);
 
             // Create a new thread to handle this request
             Thread thread = new Thread(request);
@@ -49,7 +50,7 @@ final class HttpRequest implements Runnable
         }
         catch (Exception e)
         {
-            Ssytem.out.println(e);
+            System.out.println(e);
         }
 
     }
@@ -58,10 +59,29 @@ final class HttpRequest implements Runnable
     {
         // Get a referece to the socket's input and output streams
         InputStream is = socket.getInputStream();
-        DataOutputStream os = socket.getOutputStream(); 
+        DataOutputStream os = new DataOutputStream(socket.getOutputStream()); 
 
         // Set up input stream filters
-        InputStreamRead isr = new InputStreamReader(is);
+        InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
+
+        // Get the request line of the HTTP request message
+        String requestLine = br.readLine();
+
+        // Display the request line
+        System.out.println();
+        System.out.println(requestLine);
+
+        // Get and display header lines
+        String headerLine = null;
+        while ((headerLine = br.readLine()).length() != 0 ) 
+        {
+            System.out.println(headerLine);
+        }
+        
+        // Close streams and socket
+        os.close();
+        br.close();
+        socket.close();
     }
 }
