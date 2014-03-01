@@ -43,11 +43,25 @@ final class HttpRequest implements Runnable
     // Implement the run() method of the Runnable interface
     public void run()
     {
+        try
+        {
+            processRequest();
+        }
+        catch (Exception e)
+        {
+            Ssytem.out.println(e);
+        }
 
     }
     
     private void processRequest() throws Exception
     {
+        // Get a referece to the socket's input and output streams
+        InputStream is = socket.getInputStream();
+        DataOutputStream os = socket.getOutputStream(); 
 
+        // Set up input stream filters
+        InputStreamRead isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
     }
 }
