@@ -1,3 +1,10 @@
+/* 
+* Name: WebServer.java
+* Class: CSC 360_
+* Date: 03/01/2014
+* Written By: Gary Patricelli                      
+*/
+
 import java.io.* ;
 import java.net.* ;
 import java.util.* ;
@@ -12,10 +19,10 @@ public final class WebServer
         // Establish the listen socket
         ServerSocket serverSocket = new ServerSocket(port);
 
-        // Process incomming connection requests
+        // Process incoming connection requests
         while (true) 
         {
-            // Accept the incomming request
+            // Accept the incoming request
             Socket clientSocket = serverSocket.accept();
              
             // Construct an object to process the HTTP request message.
@@ -61,7 +68,7 @@ final class HttpRequest implements Runnable
         byte[] buffer = new byte[1024];
         int bytes = 0;
 
-        // Copy reqested file into the sockets's output stream
+        // Copy requested file into the socket's output stream
         while((bytes = fis.read(buffer)) != -1 ) 
         {
             os.write(buffer, 0, bytes);
@@ -87,7 +94,7 @@ final class HttpRequest implements Runnable
     
     private void processRequest() throws Exception
     {
-        // Get a referece to the socket's input and output streams
+        // Get a reference to the socket's input and output streams
         InputStream is = socket.getInputStream();
         DataOutputStream os = new DataOutputStream(socket.getOutputStream()); 
 
@@ -111,12 +118,12 @@ final class HttpRequest implements Runnable
 
         // Extract the filename from the request line
         StringTokenizer tokens = new StringTokenizer(requestLine);
-        tokens.nextToken(); // Skip over request, assiming it is GET
+        tokens.nextToken(); // Skip over request, assuming it is GET
         String fileName = tokens.nextToken(); 
         
         // Prepend a '.' indicating the current directory
         fileName = "." + fileName;
-        
+ 
         // Open the requested file
         FileInputStream fis = null; 
         boolean fileExists = true;
@@ -129,20 +136,20 @@ final class HttpRequest implements Runnable
             fileExists = false;
         }
 
-        // Construct responce
+        // Construct response
         String statusLine = null;
         String contentTypeLine = null;
         String entityBody =  null;
         if (fileExists) 
         {
-            statusLine = "200 OK" + CRLF;
+            statusLine = "HTTP/1.0 200 OK" + CRLF;
             contentTypeLine = "Content-type: " + contentType(fileName) + CRLF;
         }
         else
         {
-            statusLine = "404 Not Found" + CRLF;
+            statusLine = "HTTP/1.0 404 Not Found" + CRLF;
             contentTypeLine = "Content-type: " + "text/html" + CRLF;
-            entityBody = "<HTML>" + "<HEAD><TITLE>Not Found</TITLE></HEAD>" +
+            entityBody = "<HTML><HEAD><TITLE>Not Found</TITLE></HEAD>" +
                          "<BODY>Not Found</BODY></HTML>";
         }
 
@@ -154,7 +161,7 @@ final class HttpRequest implements Runnable
 
         // Send a blank line indicating the end of the header
         os.writeBytes(CRLF);
-        
+ 
         // Send the entity body
         if (fileExists)
         {
